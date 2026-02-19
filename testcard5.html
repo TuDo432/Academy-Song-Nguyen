@@ -280,6 +280,16 @@
         color: #333;
         background: transparent; 
     }
+    .navigation-menu button {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.navigation-menu button:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
 </style>
 </head>
@@ -301,6 +311,9 @@
             <div style="margin-top:5px; font-size: 11px; color: #aaa; line-height: 1.4;">(Kéo trực tiếp vào ảnh thẻ để căn chỉnh vị trí)</div>
             <button onclick="resetImage()" style="margin-top: 10px; width: 100%; padding: 6px; cursor: pointer; background: #555; border: none; color: white; border-radius: 4px; font-size: 11px;">Đặt lại ảnh</button>
         </div>
+        <button class="btn-download" onclick="window.location.href='index.html'" style="background-color: #27ae60; width: 100%;">
+    <span>🏠</span> Quay lại trang chủ
+</button>
     </div>
 
     <div class="cards-wrapper">
