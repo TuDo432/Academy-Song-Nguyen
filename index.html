@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Student ID Card - SY Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="side-panel-left">
+        <button class="btn-download" onclick="downloadCard('front')">
+            <span>📸</span> Tải Mặt Trước
+        </button>
+        <button class="btn-download back-side" onclick="downloadCard('back')">
+            <span>💳</span> Tải Mặt Sau
+        </button>
+        
+        <div class="zoom-control">
+            <label>Phóng to ảnh: <b id="zoom-val">100%</b></label>
+            <input type="range" id="zoom-range" min="1" max="5" step="0.1" value="1" oninput="updateZoom()">
+            <div style="margin-top:5px; font-size: 11px; color: #aaa; line-height: 1.4;">(Kéo trực tiếp vào ảnh thẻ để căn chỉnh vị trí)</div>
+            <button onclick="resetImage()" class="btn-reset">Đặt lại ảnh</button>
+        </div>
+    </div>
+
+    <div class="cards-wrapper">
+        <div class="card-container" id="cardFront">
+            <div class="watermark-logo">SYI</div>
+
+            <div class="card-header">
+                <div class="header-title">STUDENT ID</div>
+                <div class="header-logo">
+                    <div class="logo-box">SY</div>
+                    <div class="logo-text">
+                        <strong>INSTITUTE</strong>
+                        <span>HỌC VIỆN SONG NGUYÊN</span>
+                    </div>
+                </div>
+            </div>
+
+<div class="card-body">
+                <div class="top-section">
+                    
+                    <div class="left-col">
+                        <div class="rating-stars" onclick="changeStars()">★★★</div> 
+                        <div class="photo-frame" id="photo-container"
+                             onmousedown="startDrag(event)" onmousemove="drag(event)" 
+                             onmouseup="endDrag()" onmouseleave="endDrag()">
+                            <img id="student-photo" src="https://i.pinimg.com/736x/29/7d/16/297d1656885361270275896a27618991.jpg" draggable="false">
+                            <input type="file" id="upload-input" accept="image/*" style="display: none;">
+                            <div class="overlay-hint" onclick="document.getElementById('upload-input').click()">Thay ảnh</div>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <div class="student-name" contenteditable="true">Trần Diệu Anh</div>
+                        
+                        <div class="info-grid">
+                            <div class="label">Mã số</div> <div class="colon">:</div> <div class="value" contenteditable="true" id="id-input">N4 - 205705</div>
+                            <div class="label">Lớp</div> <div class="colon">:</div> <div class="value" contenteditable="true">10A1 Kỹ thuật số</div>
+                            <div class="label">Sinh nhật</div> <div class="colon">:</div> <div class="value" contenteditable="true">06 tháng 01</div>
+                            <div class="label">Địa chỉ</div> <div class="colon">:</div> <div class="value" contenteditable="true">Số 301 – Tòa Thu Nguyệt</div>
+                            <div class="label">Khu nhà</div> <div class="colon">:</div> <div class="value" contenteditable="true">Lưu Tinh - Phòng 705</div>
+                        </div>
+
+                        <div class="barcode-section" id="barcode-display">*N4 - 205705*</div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        <div class="card-container back" id="cardBack">
+            <div class="magnetic-stripe"></div>
+            
+            <div class="signature-area">
+                <div class="signature-panel">Authorized Signature / Chữ ký chủ thẻ</div>
+                <div class="room-box" contenteditable="true">705</div>
+            </div>
+            
+            <div class="back-info">
+                <p class="lang-en">This card is the property of Sung Yuen Institute. It is non-transferable and for use by the authorized holder only.</p>
+                <p class="lang-vi">Thẻ này là tài sản của Học Viện Song Nguyên. Thẻ chỉ dành cho người được ủy quyền và không được chuyển nhượng.</p>
+                
+                <p class="lang-en">If found off-campus, please hand it to the Sung Yuen Project Office. If found on-campus, please return to the Student Affairs Office.</p>
+                <p class="lang-vi">Nếu nhặt được ngoài khuôn viên, vui lòng giao lại cho Văn phòng dự án Song Nguyên. Nếu ở trong Học viện, vui lòng trả về Phòng Công tác học viên.</p>
+            </div>
+            
+            <div class="back-footer">
+                <div contenteditable="true">Emergency Contact: (099) 555 8888</div>
+                <div contenteditable="true">sy.institute.office@gmail.com</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

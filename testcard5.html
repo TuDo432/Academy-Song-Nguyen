@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Student ID Card - SY Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<style>
+    /* === 1. THIẾT LẬP CƠ BẢN === */
+    :root {
+        --primary-black: #1a1a1a;
+        --header-color: #001f5b; 
+        --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+        --star-color: #d35400;
+        --card-width: 700px;
+        --card-height: 420px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        background: #222;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: 'Playfair Display', serif;
+        user-select: none;
+        padding: 50px 0;
+    }
+
+    .main-wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    /* === 2. PANEL ĐIỀU KHIỂN BÊN TRÁI === */
+    .side-panel-left {
+        padding-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
+        position: sticky;
+        top: 100px;
+        width: 250px;
+    }
+
+    .btn-download {
+        background-color: #e67e22; color: white; border: none; padding: 12px 25px;
+        font-family: 'Roboto', sans-serif; font-weight: 500; border-radius: 5px;
+        cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        white-space: nowrap; width: 100%; justify-content: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .btn-download:hover { background-color: #d35400; transform: translateY(-2px); }
+    .btn-download:active { transform: translateY(0); }
+    .btn-download.back-side { background-color: #34495e; } 
+
+    .zoom-control {
+        background: #333; padding: 15px; border-radius: 8px;
+        width: 100%; text-align: center; color: #fff;
+        font-family: 'Roboto', sans-serif; font-size: 13px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    input[type=range] { width: 100%; cursor: pointer; margin: 10px 0; accent-color: #e67e22; }
+
+    /* === 3. KHUNG THẺ ID === */
+    .cards-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .card-container {
+        width: var(--card-width);
+        height: var(--card-height);
+        background: var(--bg-gradient);
+        border-radius: 15px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        color: var(--primary-black);
+    }
+
+    /* === 4. MẶT TRƯỚC - CHI TIẾT === */
+    .watermark-logo {
+        position: absolute; top: 50%; left: 60%;
+        transform: translate(-50%, -50%);
+        font-size: 180px; opacity: 0.03; font-weight: 700;
+        pointer-events: none; z-index: 0;
+    }
+
+    .card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 20px 35px;
+        background-color: var(--header-color);
+        color: #fff;
+        position: relative; z-index: 2;
+    }
+    .header-title { font-size: 30px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; }
+    
+    .header-logo { display: flex; align-items: center; gap: 12px; }
+    .logo-box {
+        font-size: 24px; font-weight: 700; border: 2px solid #fff;
+        width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;
+    }
+    .logo-text { display: flex; flex-direction: column; font-family: 'Roboto', sans-serif; line-height: 1.2; text-align: left; }
+    .logo-text strong { font-size: 16px; text-transform: uppercase; }
+    .logo-text span { font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+
+    .card-body {
+        display: flex; gap: 30px; margin: 25px 35px;
+        position: relative; z-index: 2; flex: 1;
+    }
+
+    /* CỘT TRÁI (ẢNH) */
+    .left-col { width: 32%; display: flex; flex-direction: column; align-items: center; }
+    .rating-stars {
+        color: var(--star-color); font-size: 20px; align-self: flex-start;
+        margin-left: 5px; margin-bottom: 5px; cursor: pointer; letter-spacing: 2px;
+    }
+    
+    .photo-frame {
+        width: 185px; 
+    height: 235px; 
+    border: 1px solid #ddd;
+        border-radius: 8px; background: #e0e0e0; position: relative;
+        overflow: hidden; cursor: move; /* Con trỏ di chuyển */
+    }
+    .photo-frame img {
+        width: 100%; height: 100%; 
+        object-fit: cover;
+        position: absolute; top: 0; left: 0;
+        transform-origin: center center;
+        pointer-events: none;
+    }
+    .overlay-hint {
+        position: absolute; bottom: 0; left: 0; width: 100%;
+        background: rgba(0,0,0,0.6); color: white;
+        font-size: 11px; padding: 4px 0; text-align: center;
+        font-family: 'Roboto', sans-serif; opacity: 0; transition: 0.3s;
+        cursor: pointer; z-index: 10;
+    }
+    .photo-frame:hover .overlay-hint { opacity: 1; }
+    
+    .id-number { 
+        margin-top: 15px; font-size: 15px; font-weight: 700; 
+        font-family: 'Roboto', sans-serif; letter-spacing: 0.5px;
+    }
+
+    /* CỘT PHẢI (THÔNG TIN) */
+    .right-col { flex: 1; display: flex; flex-direction: column; }
+    .student-name { font-size: 34px; margin: 0 0 20px 0; font-weight: 700; }
+    
+    /* Grid 3 cột: Nhãn (90px) | Hai chấm (10px) | Giá trị (Còn lại) */
+    .info-grid {
+        display: grid; 
+        grid-template-columns: 90px 15px 1fr; 
+        row-gap: 12px; 
+        font-size: 16px;
+        align-items: center; 
+    }
+    
+    .label { 
+        color: #666; 
+        font-family: 'Roboto', sans-serif; 
+        text-align: left;
+    }
+    
+    .colon {
+        color: #666;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .value { 
+        font-weight: 600; 
+        color: #000; 
+        min-height: 24px; 
+        font-family: 'Roboto', sans-serif; 
+        font-variant-numeric: tabular-nums; 
+        display: flex; 
+        align-items: center;
+    }
+    
+    .value:focus, .student-name:focus, .id-number:focus, .room-box:focus { 
+        background: rgba(0,0,0,0.05); outline: none; border-radius: 4px;
+    }
+
+    .barcode-section {
+        margin-top: 35px;
+        font-family: 'Libre Barcode 39', cursive; 
+        font-size: 50px; 
+        color: #000;
+        transform: scaleY(1.2); 
+        transform-origin: left bottom;
+        padding-bottom: 5px;
+    }
+
+    /* === 5. MẶT SAU (ĐÃ TINH CHỈNH) === */
+    .card-container.back { 
+        background: #f8f9fa; 
+        font-family: 'Roboto', sans-serif; 
+        display: flex;
+        flex-direction: column;
+    }
+
+    .magnetic-stripe { 
+        width: 100%; 
+        height: 60px; 
+        background: #2c3e50; 
+        margin-top: 35px; 
+    }
+
+    .signature-area { 
+        display: flex; 
+        align-items: center; 
+        padding: 25px 45px; 
+        gap: 20px; 
+    }
+
+    .signature-panel {
+        flex: 1; 
+        height: 45px; 
+        background: #fff; 
+        border: 1px solid #ccc;
+        background-image: repeating-linear-gradient(45deg, #eee 0, #eee 1px, transparent 1px, transparent 5px);
+        display: flex; 
+        align-items: center; 
+        padding-left: 15px; 
+        font-style: italic; 
+        color: #888;
+    }
+
+    .room-box {
+        width: 65px; 
+        height: 45px; 
+        border: 2px solid #d35400;
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        font-weight: bold; 
+        font-size: 20px; 
+        color: #d35400; 
+        background: #fff;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .back-info { 
+        padding: 0 45px; 
+        font-size: 13px; 
+        line-height: 1.5; 
+    }
+
+    .lang-en {
+        color: #666; 
+        font-style: italic; 
+        margin: 0 0 4px 0;
+    }
+
+    .lang-vi {
+        color: #222; 
+        font-weight: 500; 
+        margin: 0 0 12px 0; 
+    }
+
+    .back-footer { 
+        margin-top: auto; 
+        padding: 15px 45px; 
+        border-top: 1px solid #e5e5e5; 
+        display: flex; 
+        justify-content: space-between; 
+        font-size: 14px; 
+        color: #333;
+        background: transparent; 
+    }
+
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+
+    <div class="side-panel-left">
+        <button class="btn-download" onclick="downloadCard('front')">
+            <span>📸</span> Tải Mặt Trước
+        </button>
+        <button class="btn-download back-side" onclick="downloadCard('back')">
+            <span>💳</span> Tải Mặt Sau
+        </button>
+        
+        <div class="zoom-control">
+            <label>Phóng to ảnh: <b id="zoom-val">100%</b></label>
+            <input type="range" id="zoom-range" min="1" max="5" step="0.1" value="1" oninput="updateZoom()">
+            <div style="margin-top:5px; font-size: 11px; color: #aaa; line-height: 1.4;">(Kéo trực tiếp vào ảnh thẻ để căn chỉnh vị trí)</div>
+            <button onclick="resetImage()" style="margin-top: 10px; width: 100%; padding: 6px; cursor: pointer; background: #555; border: none; color: white; border-radius: 4px; font-size: 11px;">Đặt lại ảnh</button>
+        </div>
+    </div>
+
+    <div class="cards-wrapper">
+
+        <div class="card-container" id="cardFront">
+            <div class="watermark-logo">SYI</div>
+
+            <div class="card-header">
+                <div class="header-title">STUDENT ID</div>
+                <div class="header-logo">
+                    <div class="logo-box">SY</div>
+                    <div class="logo-text">
+                        <strong>INSTITUTE</strong>
+                        <span>HỌC VIỆN SONG NGUYÊN</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="left-col">
+                    <div class="rating-stars" onclick="changeStars()">★★★</div> 
+                    <div class="photo-frame" id="photo-container"
+                         onmousedown="startDrag(event)" onmousemove="drag(event)" 
+                         onmouseup="endDrag()" onmouseleave="endDrag()">
+                        <img id="student-photo" src="https://i.pinimg.com/736x/29/7d/16/297d1656885361270275896a27618991.jpg" draggable="false">
+                        <input type="file" id="upload-input" accept="image/*" style="display: none;">
+                        <div class="overlay-hint" onclick="document.getElementById('upload-input').click()">Thay ảnh</div>
+                    </div>
+                    <div class="id-number" contenteditable="true">ID: N4 - 205705</div>
+                </div>
+
+                <div class="right-col">
+                    <div class="student-name" contenteditable="true">Trần Diệu Anh</div>
+                    
+                    <div class="info-grid">
+                        <div class="label">Khoa</div> <div class="colon">:</div> <div class="value" contenteditable="true">Truyền Thông</div>
+                        <div class="label">Lớp</div> <div class="colon">:</div> <div class="value" contenteditable="true">Truyền thông kỹ thuật số</div>
+                        <div class="label">Sinh nhật</div> <div class="colon">:</div> <div class="value" contenteditable="true">06 tháng 01</div>
+                        <div class="label">Địa chỉ</div> <div class="colon">:</div> <div class="value" contenteditable="true">Số 301 – Tòa Thu Nguyệt</div>
+                        <div class="label">Khu nhà</div> <div class="colon">:</div> <div class="value" contenteditable="true">Dạ Nguyệt</div>
+                    </div>
+
+                    <div class="barcode-section" contenteditable="true">*N4-205705*</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-container back" id="cardBack">
+            <div class="magnetic-stripe"></div>
+            
+            <div class="signature-area">
+                <div class="signature-panel">Authorized Signature / Chữ ký chủ thẻ</div>
+                <div class="room-box" contenteditable="true">705</div>
+            </div>
+            
+            <div class="back-info">
+                <p class="lang-en">This card is the property of Sung Yuen Institute. It is non-transferable and for use by the authorized holder only.</p>
+                <p class="lang-vi">Thẻ này là tài sản của Học Viện Song Nguyên. Thẻ chỉ dành cho người được ủy quyền và không được chuyển nhượng.</p>
+                
+                <p class="lang-en">If found off-campus, please hand it to the Sung Yuen Project Office. If found on-campus, please return to the Student Affairs Office.</p>
+                <p class="lang-vi">Nếu nhặt được ngoài khuôn viên, vui lòng giao lại cho Văn phòng dự án Song Nguyên. Nếu ở trong Học viện, vui lòng trả về Phòng Công tác học viên.</p>
+            </div>
+            
+            <div class="back-footer">
+                <div contenteditable="true">Emergency Contact: (099) 555 8888</div>
+        <div contenteditable="true">sy.institute.office@gmail.com</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // --- 1. XỬ LÝ ẢNH (Upload, Zoom, Drag) ---
+    const fileInput = document.getElementById('upload-input');
+    const imgElement = document.getElementById('student-photo');
+    
+    // Upload ảnh mới
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => { 
+                imgElement.src = e.target.result; 
+                resetImage();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    let scale = 1; 
+    let isDragging = false;
+    let startX, startY;
+    let currentLeft = 0; 
+    let currentTop = 0;
+
+    function updateZoom() {
+        scale = parseFloat(document.getElementById('zoom-range').value);
+        document.getElementById('zoom-val').innerText = Math.round(scale * 100) + "%";
+        applyTransform();
+    }
+
+    function applyTransform() {
+        imgElement.style.transform = `translate(${currentLeft}px, ${currentTop}px) scale(${scale})`;
+    }
+
+    function startDrag(e) {
+        if (e.target.className === 'overlay-hint') return;
+        isDragging = true;
+        startX = e.clientX - currentLeft;
+        startY = e.clientY - currentTop;
+        imgElement.style.transition = 'none';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        currentLeft = e.clientX - startX;
+        currentTop = e.clientY - startY;
+        applyTransform();
+    }
+
+    function endDrag() {
+        isDragging = false;
+        imgElement.style.transition = 'transform 0.1s ease-out';
+    }
+
+    function resetImage() {
+        scale = 1; 
+        currentLeft = 0; 
+        currentTop = 0;
+        document.getElementById('zoom-range').value = 1;
+        document.getElementById('zoom-val').innerText = "100%";
+        applyTransform();
+    }
+    
+    // --- 2. CÁC CHỨC NĂNG KHÁC ---
+    let starCount = 3;
+    function changeStars() {
+        starCount = (starCount % 5) + 1;
+        document.querySelector('.rating-stars').innerText = '★'.repeat(starCount);
+    }
+
+    function downloadCard(side) {
+        const cardElement = (side === 'front') ? document.getElementById('cardFront') : document.getElementById('cardBack');
+        const nameText = document.querySelector('.student-name').innerText.trim();
+        const fileName = nameText.replace(/\s+/g, '_') || 'student';
+        
+        // Tạo canvas với chất lượng cao hơn
+        html2canvas(cardElement, { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: null,
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `ID_${fileName}_${side}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
