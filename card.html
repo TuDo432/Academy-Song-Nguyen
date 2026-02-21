@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Executive Staff ID - SY Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <link rel="stylesheet" href="style-staff.css">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="side-panel">
+        <button class="btn-nav btn-back" onclick="window.location.href='index.html'">🏠 Thẻ Học Viên</button>
+        
+        <div class="zoom-control">
+            <label>Phóng to: <b id="zoom-val">100%</b></label>
+            <input type="range" id="zoom-range" min="1" max="4" step="0.1" value="1" oninput="updateZoom()">
+            <button onclick="resetImage()" class="btn-reset">Reset Vị Trí</button>
+        </div>
+
+        <button class="btn-nav btn-download" onclick="downloadCard()">📸 Tải Thẻ Nhân Sự</button>
+    </div>
+
+    <div class="card-container" id="staffCard">
+        
+<div class="card-header">
+            <div class="header-left">
+                <h2>EXECUTIVE ID</h2>
+            </div>
+            
+            <div class="header-logo">
+                <div class="logo-box">SY</div>
+                <div class="logo-text-group">
+                    <strong>INSTITUTE</strong>
+                    <span>HỌC VIỆN SONG NGUYÊN</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="left-col">
+                <div class="rating-stars" onclick="changeStars()">★★★</div>
+                <div class="photo-frame" id="photo-container" 
+                     onmousedown="startDrag(event)" onmousemove="drag(event)" 
+                     onmouseup="endDrag()" onmouseleave="endDrag()">
+                    <img id="staff-photo" src="https://via.placeholder.com/190x240" draggable="false">
+                    <input type="file" id="upload-input" accept="image/*" style="display: none;" onchange="handleUpload(this)">
+                    <div class="overlay-hint" onclick="document.getElementById('upload-input').click()">THAY ẢNH</div>
+                </div>
+<div class="staff-id-under-photo" contenteditable="true">
+    ID: MWBN-4697
+</div>
+            </div>
+
+            <div class="right-col">
+                <div class="staff-name" contenteditable="true">Hứa Nhạc Thần</div>
+                
+                <div class="info-grid">
+                    <div class="label">Chức danh:</div><div class="value" contenteditable="true">Phó hiệu trưởng</div>
+                    <div class="label">Phòng ban:</div><div class="value" contenteditable="true">Ban giám hiệu</div>
+                    <div class="label">Sinh nhật:</div><div class="value" contenteditable="true">26/12</div>
+                    <div class="label">Quốc tịch:</div><div class="value" contenteditable="true">Lan Trà</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-assets">
+<div class="barcode" contenteditable="true">*MWBN-4697*</div>            <div class="qr-placeholder">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SNA-STAFF-4697" alt="QR Code">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let scale = 1, isDragging = false, startX, startY, currentLeft = 0, currentTop = 0;
+    const img = document.getElementById('staff-photo');
+
+    function updateZoom() {
+        scale = document.getElementById('zoom-range').value;
+        document.getElementById('zoom-val').innerText = Math.round(scale * 100) + "%";
+        applyTransform();
+    }
+
+    function applyTransform() {
+        img.style.transform = `translate(${currentLeft}px, ${currentTop}px) scale(${scale})`;
+    }
+
+    function startDrag(e) {
+        if(e.target.className === 'overlay-hint') return;
+        isDragging = true;
+        startX = e.clientX - currentLeft;
+        startY = e.clientY - currentTop;
+    }
+
+    function drag(e) {
+        if(!isDragging) return;
+        currentLeft = e.clientX - startX;
+        currentTop = e.clientY - startY;
+        applyTransform();
+    }
+
+    function endDrag() { isDragging = false; }
+
+    function resetImage() {
+        scale = 1; currentLeft = 0; currentTop = 0;
+        document.getElementById('zoom-range').value = 1;
+        document.getElementById('zoom-val').innerText = "100%";
+        applyTransform();
+    }
+
+    function handleUpload(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => { img.src = e.target.result; resetImage(); };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    let stars = 3;
+    function changeStars() {
+        stars = (stars % 5) + 1;
+        document.querySelector('.rating-stars').innerText = '★'.repeat(stars);
+    }
+
+    function downloadCard() {
+        html2canvas(document.querySelector("#staffCard"), { scale: 2, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'SNA_Staff_Card.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+</script>
+</body>
+</html>

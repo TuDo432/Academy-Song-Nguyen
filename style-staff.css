@@ -1,0 +1,160 @@
+:root {
+    --staff-primary: #7b1113; /* Đỏ rượu */
+    --staff-gold: #c5a059;   /* Vàng đồng */
+    --bg-gradient: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
+    --card-width: 700px;
+    --card-height: 420px;
+}
+
+body {
+    background: #121212; display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; font-family: 'Roboto', sans-serif; margin: 0; padding: 20px;
+}
+
+.main-wrapper { display: flex; gap: 30px; align-items: flex-start; }
+
+/* --- SIDE PANEL --- */
+.side-panel {
+    display: flex; flex-direction: column; gap: 15px; width: 220px;
+}
+
+.btn-nav {
+    padding: 12px; border: none; border-radius: 6px; color: white;
+    font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+.btn-download { background: #e67e22; }
+.btn-back { background: #34495e; }
+
+.zoom-control {
+    background: #222; padding: 15px; border-radius: 8px; color: white; font-size: 13px;
+}
+input[type=range] { width: 100%; margin: 10px 0; accent-color: var(--staff-gold); }
+
+.btn-reset {
+    width: 100%; background: #444; border: none; color: white; 
+    padding: 8px; cursor: pointer; border-radius: 4px; font-size: 11px;
+    transition: 0.2s;
+}
+.btn-reset:hover { background: #555; }
+
+/* --- CARD DESIGN --- */
+.card-container {
+    width: var(--card-width); height: var(--card-height);
+    background: var(--bg-gradient); border-radius: 15px;
+    position: relative; overflow: hidden; color: white;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Dải sọc trang trí */
+.card-container::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 8px;
+    background: repeating-linear-gradient(90deg, var(--staff-gold), var(--staff-gold) 40px, transparent 40px, transparent 45px);
+}
+
+.card-header {
+    padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: center;
+}
+
+.header-left { border-left: 3px solid var(--staff-gold); padding-left: 15px; }
+.header-left h2 { margin: 0; font-size: 24px; letter-spacing: 2px; font-weight: 400; opacity: 0.9; }
+
+/* --- Style cho Logo vuông mới ở góc phải --- */
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-box {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--staff-gold);
+    border: 2.5px solid var(--staff-gold);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.logo-text-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    color: var(--staff-gold);
+    font-family: 'Roboto', sans-serif;
+}
+
+.logo-text-group strong {
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+}
+
+.logo-text-group span {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+/* Đã xóa .header-right cũ */
+
+.card-body { display: flex; padding: 20px 40px; gap: 35px; }
+
+/* Khung ảnh nhân sự */
+.left-col { position: relative; display: flex; flex-direction: column; align-items: center; }
+.photo-frame {
+    width: 190px; height: 240px; border: 2px solid var(--staff-gold);
+    border-radius: 12px; background: #333; overflow: hidden;
+    position: relative; cursor: move;
+}
+.photo-frame img {
+    width: 100%; height: 100%; object-fit: cover; position: absolute;
+    pointer-events: none; transform-origin: center;
+}
+.overlay-hint {
+    position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7);
+    color: var(--staff-gold); font-size: 11px; text-align: center; padding: 5px 0;
+    cursor: pointer; opacity: 0; transition: 0.3s;
+}
+.photo-frame:hover .overlay-hint { opacity: 1; }
+
+.rating-stars { 
+    color: var(--staff-gold); font-size: 18px; position: absolute; 
+    top: -25px; left: 0; cursor: pointer;
+}
+
+/* --- Style mới cho ID dưới ảnh --- */
+.staff-id-under-photo {
+    margin-top: 10px;
+    color: var(--staff-gold);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Thông tin */
+.right-col { flex: 1; }
+.staff-name {
+    font-family: 'Playfair Display', serif; font-size: 38px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--staff-gold); display: inline-block;
+}
+
+.info-grid { display: grid; grid-template-columns: 100px 1fr; row-gap: 12px; font-size: 17px; }
+.label { color: #aaa; font-weight: 400; }
+.value { font-weight: 500; }
+.value:focus { outline: none; background: rgba(255,255,255,0.05); }
+
+/* QR Code & Barcode */
+.footer-assets {
+    position: absolute; bottom: 25px; right: 40px; display: flex; align-items: flex-end; gap: 20px;
+}
+.barcode { font-family: 'Libre Barcode 39'; font-size: 45px; color: var(--staff-gold); opacity: 0.8; }
+.qr-placeholder { 
+    width: 80px; height: 80px; background: white; padding: 5px; border-radius: 4px;
+}
+.qr-placeholder img { width: 100%; height: 100%; }
