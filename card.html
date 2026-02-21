@@ -14,6 +14,16 @@
     <div class="side-panel">
         <button class="btn-nav btn-back" onclick="window.location.href='index.html'">🏠 Thẻ Học Viên</button>
         
+        <div class="control-box">
+            <label for="card-type" style="display:block; margin-bottom: 5px;">Chọn chức vụ:</label>
+            <select id="card-type" onchange="changeCardTheme()">
+                <option value="executive">Ban Giám Hiệu (Executive)</option>
+                <option value="lecturer">Giảng viên (Lecturer)</option>
+                <option value="teacher">Giáo viên (Teacher)</option>
+                <option value="staff">Nhân viên (Staff)</option>
+            </select>
+        </div>
+
         <div class="zoom-control">
             <label>Phóng to: <b id="zoom-val">100%</b></label>
             <input type="range" id="zoom-range" min="1" max="4" step="0.1" value="1" oninput="updateZoom()">
@@ -25,9 +35,10 @@
 
     <div class="card-container" id="staffCard">
         <div class="watermark-logo">SYI</div>
-<div class="card-header">
+        
+        <div class="card-header">
             <div class="header-left">
-                <h2>EXECUTIVE ID</h2>
+                <h2 id="card-role-title">EXECUTIVE ID</h2>
             </div>
             
             <div class="header-logo">
@@ -49,9 +60,10 @@
                     <input type="file" id="upload-input" accept="image/*" style="display: none;" onchange="handleUpload(this)">
                     <div class="overlay-hint" onclick="document.getElementById('upload-input').click()">THAY ẢNH</div>
                 </div>
-<div class="staff-id-under-photo" contenteditable="true">
-    ID: MWBN-4697
-</div>
+                
+                <div class="staff-id-under-photo" contenteditable="true">
+                    ID: MWBN-4697
+                </div>
             </div>
 
             <div class="right-col">
@@ -59,7 +71,7 @@
                 
                 <div class="info-grid">
                     <div class="label">Chức danh:</div><div class="value" contenteditable="true">Phó hiệu trưởng</div>
-                    <div class="label">Phòng ban:</div><div class="value" contenteditable="true">Ban giám hiệu</div>
+                    <div class="label" id="label-dept">Phòng ban:</div><div class="value" contenteditable="true">Ban giám hiệu</div>
                     <div class="label">Sinh nhật:</div><div class="value" contenteditable="true">26/12</div>
                     <div class="label">Quốc tịch:</div><div class="value" contenteditable="true">Lan Trà</div>
                 </div>
@@ -67,7 +79,8 @@
         </div>
 
         <div class="footer-assets">
-<div class="barcode" contenteditable="true">*MWBN-4697*</div>            <div class="qr-placeholder">
+            <div class="barcode" contenteditable="true">*MWBN-4697*</div>
+            <div class="qr-placeholder">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SNA-STAFF-4697" alt="QR Code">
             </div>
         </div>
@@ -75,6 +88,52 @@
 </div>
 
 <script>
+    // --- Logic Thay đổi Màu Nền, Tiêu Đề & Nhãn Thông Tin ---
+    function changeCardTheme() {
+        const type = document.getElementById('card-type').value;
+        const titleElement = document.getElementById('card-role-title');
+        const deptLabel = document.getElementById('label-dept'); // Lấy nhãn thông tin
+        const root = document.documentElement; 
+
+        if (type === 'executive') {
+            titleElement.innerText = "EXECUTIVE ID";
+            deptLabel.innerText = "Phòng ban:"; // Đổi nhãn
+            
+            root.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%)');
+            root.style.setProperty('--staff-gold', '#c5a059'); 
+            root.style.setProperty('--text-main', '#ffffff'); 
+            root.style.setProperty('--text-label', '#aaaaaa'); 
+        } 
+        else if (type === 'lecturer') {
+            titleElement.innerText = "LECTURER ID";
+            deptLabel.innerText = "Khoa:"; // Đổi nhãn
+            
+            root.style.setProperty('--bg-gradient', '#b5cddf'); 
+            root.style.setProperty('--staff-gold', '#1a1a1a'); 
+            root.style.setProperty('--text-main', '#1a1a1a'); 
+            root.style.setProperty('--text-label', '#444444'); 
+        } 
+        else if (type === 'teacher') {
+            titleElement.innerText = "TEACHER ID";
+            deptLabel.innerText = "Bộ môn:"; // Đổi nhãn
+            
+            root.style.setProperty('--bg-gradient', '#4b7b93'); 
+            root.style.setProperty('--staff-gold', '#ffffff'); 
+            root.style.setProperty('--text-main', '#ffffff'); 
+            root.style.setProperty('--text-label', '#dddddd'); 
+        } 
+        else if (type === 'staff') {
+            titleElement.innerText = "STAFF ID";
+            deptLabel.innerText = "Vị trí:"; // Đổi nhãn
+            
+            root.style.setProperty('--bg-gradient', '#e2e1dc'); 
+            root.style.setProperty('--staff-gold', '#1a1a1a'); 
+            root.style.setProperty('--text-main', '#1a1a1a'); 
+            root.style.setProperty('--text-label', '#555555'); 
+        }
+    }
+
+    // --- Logic Zoom, Drag & Upload ---
     let scale = 1, isDragging = false, startX, startY, currentLeft = 0, currentTop = 0;
     const img = document.getElementById('staff-photo');
 
@@ -127,7 +186,7 @@
     }
 
     function downloadCard() {
-        html2canvas(document.querySelector("#staffCard"), { scale: 2, useCORS: true }).then(canvas => {
+        html2canvas(document.querySelector("#staffCard"), { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'SNA_Staff_Card.png';
             link.href = canvas.toDataURL();
