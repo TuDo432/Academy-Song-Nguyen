@@ -46,6 +46,21 @@ input[type=range] { width: 100%; margin: 10px 0; accent-color: var(--staff-gold)
     border: 1px solid rgba(255,255,255,0.1);
 }
 
+/* --- Watermark in chìm cho nền tối --- */
+.watermark-logo {
+    position: absolute; 
+    top: 55%; /* Hơi đẩy xuống một chút để cân bằng với header */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 200px; /* To hẳn ra cho hoành tráng */
+    font-weight: 700;
+    color: var(--staff-gold); /* Dùng màu vàng đồng cho tone-sur-tone */
+    opacity: 0.04; /* Độ mờ cực thấp, chỉ lấp ló */
+    pointer-events: none; /* Không cản trở việc click vào các thông tin khác */
+    z-index: 0;
+    font-family: 'Playfair Display', serif;
+}
+
 /* Dải sọc trang trí */
 .card-container::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 8px;
